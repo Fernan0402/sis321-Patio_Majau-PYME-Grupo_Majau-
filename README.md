@@ -1,27 +1,35 @@
 # Sistema de Ventas - Restaurante Patio del Majau
 
-## 1) Descripción
+Proyecto académico de **Desarrollo de Sistemas II** para digitalizar la operación del restaurante: autenticación, usuarios, productos, inventario, pedidos, ventas y facturación.
 
-Proyecto académico de **Desarrollo de Sistemas II** para digitalizar el flujo operativo del restaurante Patio del Majau: usuarios, productos, menú, pedidos, ventas y facturación.
+## Stack tecnológico
 
-Este repositorio contiene la implementación del **Sprint 1** priorizado por MoSCoW.
+- **Backend:** Laravel (PHP 8.x)
+- **Frontend:** Blade + Bootstrap + Vite
+- **Base de datos:** MySQL (XAMPP)
+- **Versionado:** Git + GitHub
 
-## 2) Stack tecnológico (Paso 1)
+## Módulos implementados (Sprint 1)
 
-- **Backend**: PHP 8.x + Laravel (base del proyecto en Laravel 12, compatible con enfoque Laravel 11)
-- **Base de datos**: MySQL (XAMPP)
-- **Frontend**: Blade + Bootstrap
-- **Entorno local**: XAMPP y Artisan (`php artisan serve`)
+- **HU-01:** Inicio de sesión (usuario/contraseña, validación, logout, redirección por rol)
+- **HU-08:** Registro y gestión de usuarios (empleados)
+- **HU-14:** Registro de productos
+- **HU-13:** Menú por categorías con productos activos
+- **HU-19:** Inventario con alertas de stock bajo y actualización manual
+- **HU-02:** Registro de pedidos con detalle y validación de stock
+- **HU-03:** Registro de ventas
+- **HU-17:** Generación de factura con numeración única, detalle e impresión
 
-## 3) Base de datos (Paso 2)
+## Seguridad y control de acceso
 
-- Motor usado: **MySQL de XAMPP**
-- Diseño basado en el DER derivado del diagrama de clases de Actividad 2
-- Normalización aplicada en diseño:
-  - 1FN: atributos atómicos
-  - 2FN: separación de entidades y eliminación de dependencias parciales
-  - 3FN: eliminación de dependencias transitivas
-- Se implementaron migraciones con constraints (PK, FK, unique, enums)
+- Middleware `auth` en rutas internas.
+- Middleware `role` para perfiles:
+  - **Administrador:** usuarios, productos, inventario, ventas, pedidos
+  - **Mesero:** pedidos
+  - **Cajero:** ventas y facturas
+  - **Cocinero:** actualización de estado de pedidos
+
+## Base de datos
 
 Tablas principales:
 
@@ -35,16 +43,7 @@ Tablas principales:
 - `ventas`
 - `facturas`
 
-## 4) Datos de prueba (Paso 3)
-
-Se puede cargar datos de prueba con seeders:
-
-```bash
-php artisan migrate
-php artisan db:seed
-```
-
-Seeders incluidos:
+Seeders disponibles:
 
 - `EmpleadoSeeder`
 - `MesaSeeder`
@@ -52,37 +51,7 @@ Seeders incluidos:
 - `ProductoSeeder`
 - `ProductoInsumoSeeder`
 
-> Nota: Se puede complementar con Mockaroo (nombres LATAM, ciudades, etc.) exportando CSV/SQL para ampliar volumen de pruebas.
-
-## 5) Historias de Usuario del Sprint 1 implementadas
-
-Estado actual (HU-01 temporalmente en pausa por incidencia de sesión/rutas en entorno local):
-
-- HU-08: Registrar usuarios
-- HU-14: Registrar productos
-- HU-13: Ver menú
-- HU-19: Notificar falta de stock
-- HU-02: Registrar pedido
-- HU-17: Generar factura
-- HU-03: Registrar venta
-
-## 6) Rutas clave para demo
-
-- `/dashboard`
-- `/empleados`
-- `/productos`
-- `/menu`
-- `/pedidos`
-- `/ventas`
-- `/ventas/{venta}/factura`
-
-## 7) Instalación y ejecución
-
-1. Clonar repositorio
-2. Instalar dependencias
-3. Configurar `.env`
-4. Ejecutar migraciones y seeders
-5. Levantar servidor local
+## Instalación y ejecución
 
 ```bash
 composer install
@@ -95,57 +64,49 @@ npm run build
 php artisan serve
 ```
 
-## 8) Branching strategy (recomendado)
+Acceso local: `http://127.0.0.1:8000`
 
-- `main`: rama estable
-- `develop`: integración del sprint
-- `feature/hu-08-usuarios`
-- `feature/hu-14-productos`
-- `feature/hu-13-menu`
-- `feature/hu-19-stock-alertas`
-- `feature/hu-02-pedidos`
-- `feature/hu-03-ventas-hu17-factura`
-- `docs/sprint1-informe`
+## Verificación rápida
 
-## 9) Plan de commits para GitHub (5+ commits)
+```bash
+php artisan route:list
+php artisan test
+```
 
-Sugerencia mínima de commits descriptivos:
+## Rutas principales
 
-1. `feat(hu-08): implementar CRUD de empleados para registro de usuarios`
-2. `feat(hu-14): completar validaciones y vistas de gestión de productos`
-3. `feat(hu-13): agregar vista de menú por categorías para cliente`
-4. `feat(hu-19): incorporar alertas de stock bajo en dashboard y pedidos`
-5. `feat(hu-02): implementar registro de pedidos con detalle y cambio de estado`
-6. `feat(hu-03,hu-17): registrar ventas y generar factura correlativa`
-7. `docs(sprint1): agregar informe APA7, demo review y retrospectiva`
+- `/login`
+- `/dashboard`
+- `/empleados`
+- `/productos`
+- `/menu`
+- `/inventario`
+- `/pedidos`
+- `/ventas`
+- `/ventas/{venta}/factura`
 
-## 10) Sprint Review - Demo (10 min)
+## Estructura documental
 
-Flujo recomendado:
+- `INFORME_DESARROLLO_SISTEMA_WEB.md`
+- `RETROSPECTIVA_SPRINT1.md`
+- `AGENTS.md`
+- `DEPLOY.md`
+- `docs/ROADMAP.md`
+- `docs/arquitectura.md`
+- `docs/backlog.md`
+- `docs/casos_de_uso.md`
+- `docs/modelo_datos.md`
+- `docs/diagramas_uml.md`
+- `docs/guia_entrevista.md`
+- `docs/DESIGN.md`
 
-1. Crear usuario en `/empleados/create` (Administrador/Cajero/Mesero)
-2. Crear producto en `/productos/create`
-3. Ver menú en `/menu`
-4. Registrar pedido en `/pedidos/create`
-5. Actualizar estado hasta `Entregado`
-6. Registrar venta en `/ventas/create`
-7. Mostrar factura en `/ventas/{id}/factura`
+## Flujo de demo recomendado
 
-## 11) Retrospectiva Start / Stop / Continue
-
-| Tipo | Ítem |
-|---|---|
-| Start | Automatizar pruebas HTTP de flujo pedido -> venta -> factura |
-| Start | Integrar carga masiva de datos Mockaroo para pruebas de rendimiento |
-| Stop | Acoplar lógica de negocio directamente en controladores largos |
-| Stop | Dejar rutas críticas sin pruebas de regresión antes de merge |
-| Continue | Desarrollo por HU y prioridad MoSCoW |
-| Continue | Uso de migraciones, seeders y commits semánticos por feature |
-
-## 12) Entregable de informe
-
-Revisar el documento:
-
-- `INFORME_SPRINT1_APA7.md`
-
-Incluye resumen ejecutivo, marco teórico con citas, desarrollo, resultados, conclusiones, plan de review, retrospectiva y referencias en formato APA 7.
+1. Iniciar sesión según rol.
+2. (Admin) Registrar usuario.
+3. (Admin) Registrar producto y asociar insumos.
+4. Ver menú.
+5. (Mesero/Admin) Registrar pedido.
+6. Cambiar estado del pedido hasta `Entregado`.
+7. (Cajero/Admin) Registrar venta.
+8. Visualizar/imprimir factura.

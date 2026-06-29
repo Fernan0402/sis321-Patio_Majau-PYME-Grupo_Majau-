@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Insumo;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\View;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +22,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        View::composer('*', function ($view): void {
+            $totalAlertasStock = 0;
+
+            // Evita error si la tabla aún no existe (por ejemplo en instalación inicial).
+            if (Schema::hasTable('insumos')) {
+                $totalAlertasStock = Insumo::whereColumn('stock_actual', '<=', 'stock_minimo')->count();
+            }
+
+            $view->with('totalAlertasStock', $totalAlertasStock);
+        });
     }
 }

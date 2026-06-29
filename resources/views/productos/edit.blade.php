@@ -87,6 +87,28 @@
                             @enderror
                         </div>
 
+                        <hr>
+                        <h5>Asociar insumos (receta)</h5>
+                        <p class="text-muted mb-2">Actualiza la receta del producto seleccionando insumos y cantidades.</p>
+                        <div class="row">
+                            @foreach($insumos as $insumo)
+                                @php
+                                    $cantidadActual = $insumosAsignados[$insumo->id] ?? null;
+                                @endphp
+                                <div class="col-md-6 mb-2">
+                                    <div class="border rounded p-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="insumos[]" value="{{ $insumo->id }}" id="insumo_{{ $insumo->id }}" {{ $cantidadActual ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="insumo_{{ $insumo->id }}">
+                                                {{ $insumo->nombre }} ({{ $insumo->unidad_medida }})
+                                            </label>
+                                        </div>
+                                        <input type="number" step="0.01" min="0.01" class="form-control mt-2" name="cantidades[{{ $insumo->id }}]" value="{{ $cantidadActual }}" placeholder="Cantidad necesaria">
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary">Actualizar Producto</button>
                         </div>

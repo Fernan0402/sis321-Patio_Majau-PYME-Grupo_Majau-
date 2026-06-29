@@ -82,4 +82,18 @@ class LoginController extends Controller implements HasMiddleware
                 'usuario' => 'Usuario o contraseña incorrectos, o cuenta inactiva.',
             ]);
     }
+
+    /**
+     * HU-01: Redirección por rol después del login exitoso.
+     */
+    protected function authenticated(Request $request, $user)
+    {
+        return match ($user->rol) {
+            'Administrador' => redirect()->route('dashboard.admin'),
+            'Mesero' => redirect()->route('dashboard.mesero'),
+            'Cajero' => redirect()->route('dashboard.cajero'),
+            'Cocinero' => redirect()->route('dashboard.cocinero'),
+            default => redirect()->route('dashboard'),
+        };
+    }
 }

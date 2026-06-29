@@ -8,11 +8,18 @@
                 <div class="card-header">Dashboard - Restaurante Patio del Majau</div>
                 <div class="card-body">
                     <div class="mb-3 d-flex gap-2 flex-wrap">
-                        <a href="{{ route('empleados.index') }}" class="btn btn-outline-primary">HU-08 Usuarios</a>
-                        <a href="{{ route('productos.index') }}" class="btn btn-outline-primary">HU-14 Productos</a>
                         <a href="{{ route('menu.index') }}" class="btn btn-outline-primary">HU-13 Menú</a>
-                        <a href="{{ route('pedidos.index') }}" class="btn btn-outline-primary">HU-02 Pedidos</a>
-                        <a href="{{ route('ventas.index') }}" class="btn btn-outline-primary">HU-03 Ventas</a>
+                        @if(auth()->user()->rol === 'Administrador')
+                            <a href="{{ route('empleados.index') }}" class="btn btn-outline-primary">HU-08 Usuarios</a>
+                            <a href="{{ route('productos.index') }}" class="btn btn-outline-primary">HU-14 Productos</a>
+                            <a href="{{ route('inventario.index') }}" class="btn btn-outline-primary">HU-19 Inventario</a>
+                        @endif
+                        @if(in_array(auth()->user()->rol, ['Administrador', 'Mesero'], true))
+                            <a href="{{ route('pedidos.index') }}" class="btn btn-outline-primary">HU-02 Pedidos</a>
+                        @endif
+                        @if(in_array(auth()->user()->rol, ['Administrador', 'Cajero'], true))
+                            <a href="{{ route('ventas.index') }}" class="btn btn-outline-primary">HU-03 Ventas</a>
+                        @endif
                     </div>
 
                     <div class="row">

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Insumo;
 use App\Models\Producto;
 use Illuminate\Http\Request;
 
@@ -19,7 +20,8 @@ class ProductoController extends Controller
 
     public function create()
     {
-        return view('productos.create');
+        $insumos = Insumo::orderBy('nombre')->get();
+        return view('productos.create', compact('insumos'));
     }
 
     public function store(Request $request)
@@ -30,15 +32,31 @@ class ProductoController extends Controller
             'precio' => 'required|numeric|min:0',
             'categoria' => 'nullable|string|max:50',
             'estado' => 'required|in:Activo,Inactivo',
+            'insumos' => 'nullable|array',
+            'insumos.*' => 'exists:insumos,id',
+            'cantidades' => 'nullable|array',
+            'cantidades.*' => 'nullable|numeric|min:0.01',
         ]);
 
-        Producto::create($request->only([
+        $producto = Producto::create($request->only([
             'nombre',
             'descripcion',
             'precio',
             'categoria',
             'estado',
         ]));
+
+        // HU-14: Asociación producto-insumo desde UI.
+        $syncData = [];
+        foreach ((array) $request->input('insumos', []) as $insumoId) {
+            $cantidad = (float) ($request->input("cantidades.$insumoId") ?? 0);
+            if ($cantidad > 0) {
+                $syncData[$insumoId] = ['cantidad_necesaria' => $cantidad];
+            }
+        }
+        if (! empty($syncData)) {
+            $producto->insumos()->sync($syncData);
+        }
 
         return redirect()->route('productos.index')
             ->with('success', 'Producto creado exitosamente');
@@ -51,7 +69,9 @@ class ProductoController extends Controller
 
     public function edit(Producto $producto)
     {
-        return view('productos.edit', compact('producto'));
+        $insumos = Insumo::orderBy('nombre')->get();
+        $insumosAsignados = $producto->insumos->pluck('pivot.cantidad_necesaria', 'id');
+        return view('productos.edit', compact('producto', 'insumos', 'insumosAsignados'));
     }
 
     public function update(Request $request, Producto $producto)
@@ -62,6 +82,10 @@ class ProductoController extends Controller
             'precio' => 'required|numeric|min:0',
             'categoria' => 'nullable|string|max:50',
             'estado' => 'required|in:Activo,Inactivo',
+            'insumos' => 'nullable|array',
+            'insumos.*' => 'exists:insumos,id',
+            'cantidades' => 'nullable|array',
+            'cantidades.*' => 'nullable|numeric|min:0.01',
         ]);
 
         $producto->update($request->only([
@@ -71,6 +95,15 @@ class ProductoController extends Controller
             'categoria',
             'estado',
         ]));
+
+        $syncData = [];
+        foreach ((array) $request->input('insumos', []) as $insumoId) {
+            $cantidad = (float) ($request->input("cantidades.$insumoId") ?? 0);
+            if ($cantidad > 0) {
+                $syncData[$insumoId] = ['cantidad_necesaria' => $cantidad];
+            }
+        }
+        $producto->insumos()->sync($syncData);
 
         return redirect()->route('productos.index')
             ->with('success', 'Producto actualizado exitosamente');

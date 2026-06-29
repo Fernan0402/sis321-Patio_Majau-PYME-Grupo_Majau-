@@ -26,24 +26,43 @@
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('empleados.index') }}">Usuarios</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('productos.index') }}">Productos</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('menu.index') }}">Menú</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('pedidos.index') }}">Pedidos</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('ventas.index') }}">Ventas</a>
-                        </li>
+                        @auth
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('menu.index') }}">Menú</a>
+                            </li>
+
+                            @if(Auth::user()->rol === 'Administrador')
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('empleados.index') }}">Usuarios</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('productos.index') }}">Productos</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('inventario.index') }}">
+                                        Inventario
+                                        @if(($totalAlertasStock ?? 0) > 0)
+                                            <span class="badge bg-danger">{{ $totalAlertasStock }}</span>
+                                        @endif
+                                    </a>
+                                </li>
+                            @endif
+
+                            @if(in_array(Auth::user()->rol, ['Administrador', 'Mesero'], true))
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('pedidos.index') }}">Pedidos</a>
+                                </li>
+                            @endif
+
+                            @if(in_array(Auth::user()->rol, ['Administrador', 'Cajero'], true))
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('ventas.index') }}">Ventas</a>
+                                </li>
+                            @endif
+                        @endauth
                     </ul>
 
                     <ul class="navbar-nav ms-auto">

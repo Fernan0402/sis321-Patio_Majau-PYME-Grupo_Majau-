@@ -27,7 +27,7 @@ class VentaController extends Controller
     {
         $pedidos = Pedido::where('estado', 'Entregado')
             ->doesntHave('venta')
-            ->with('mesa')
+            ->with('mesa', 'detalles')
             ->orderByDesc('id')
             ->get();
 
@@ -48,7 +48,6 @@ class VentaController extends Controller
         $data = $request->validate([
             'pedido_id' => 'required|exists:pedidos,id',
             'empleado_id' => 'required|exists:empleados,id',
-            'monto_total' => 'required|numeric|min:0',
             'metodo_pago' => 'required|in:Efectivo,Tarjeta Débito,Tarjeta Crédito,QR',
             'razon_social_cliente' => 'nullable|string|max:150',
             'nit_cliente' => 'nullable|string|max:50',
@@ -61,7 +60,8 @@ class VentaController extends Controller
             $venta = Venta::create([
                 'pedido_id' => $pedido->id,
                 'empleado_id' => $data['empleado_id'],
-                'monto_total' => $data['monto_total'],
+                // HU-03: el monto se calcula automáticamente desde el pedido.
+                'monto_total' => $pedido->total,
                 'metodo_pago' => $data['metodo_pago'],
             ]);
 
@@ -69,8 +69,14 @@ class VentaController extends Controller
             if ($pedido->mesa) {
                 $pedido->mesa->update(['estado' => 'Disponible']);
             }
+            // HU-03: dejar explícitamente el pedido como entregado.
+            $pedido->update(['estado' => 'Entregado']);
 
-            if (($data['generar_factura'] ?? true) === true) {
+            $generarFactura = array_key_exists('generar_factura', $data)
+                ? filter_var($data['generar_factura'], FILTER_VALIDATE_BOOL)
+                : true;
+
+            if ($generarFactura) {
                 Factura::create([
                     'venta_id' => $venta->id,
                     'numero_factura' => $this->generarNumeroFactura(),
@@ -95,7 +101,7 @@ class VentaController extends Controller
 
     public function generarFactura(Venta $venta)
     {
-        $venta->loadMissing('factura', 'pedido.mesa', 'empleado');
+        $venta->loadMissing('factura', 'pedido.mesa', 'pedido.detalles.producto', 'empleado');
 
         if (! $venta->factura) {
             $venta->factura()->create([

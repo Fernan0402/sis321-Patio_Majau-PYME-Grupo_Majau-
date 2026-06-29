@@ -23,10 +23,10 @@
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label">Pedido entregado</label>
-                        <select name="pedido_id" class="form-select" required>
+                        <select name="pedido_id" class="form-select" id="pedido_id" required>
                             <option value="">Seleccione...</option>
                             @foreach($pedidos as $pedido)
-                                <option value="{{ $pedido->id }}">
+                                <option value="{{ $pedido->id }}" data-total="{{ $pedido->total }}">
                                     Pedido #{{ $pedido->id }} / Mesa {{ $pedido->mesa?->numero_mesa ?? '-' }} / Bs. {{ number_format($pedido->total, 2) }}
                                 </option>
                             @endforeach
@@ -42,8 +42,8 @@
                         </select>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Monto total</label>
-                        <input type="number" step="0.01" min="0" name="monto_total" class="form-control" required>
+                        <label class="form-label">Monto total (automático)</label>
+                        <input type="text" id="monto_total_preview" class="form-control" value="Bs. 0.00" readonly>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Método de pago</label>
@@ -78,4 +78,17 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const pedidoSelect = document.getElementById('pedido_id');
+    const montoPreview = document.getElementById('monto_total_preview');
+
+    pedidoSelect?.addEventListener('change', function () {
+        const selected = pedidoSelect.options[pedidoSelect.selectedIndex];
+        const total = parseFloat(selected?.dataset?.total ?? 0);
+        montoPreview.value = `Bs. ${total.toFixed(2)}`;
+    });
+});
+</script>
 @endsection
