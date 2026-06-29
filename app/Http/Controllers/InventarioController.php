@@ -3,19 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Models\Insumo;
+use App\Services\InventarioService;
 use Illuminate\Http\Request;
 
 class InventarioController extends Controller
 {
+    public function __construct(
+        private readonly InventarioService $inventarioService
+    ) {
+    }
+
     /**
      * HU-19: vista de inventario con alertas de stock bajo.
      */
     public function index()
     {
-        $insumos = Insumo::orderBy('nombre')->get();
-        $totalAlertas = $insumos->filter(fn (Insumo $insumo) => $insumo->tieneStockBajo())->count();
-
-        return view('inventario.index', compact('insumos', 'totalAlertas'));
+        $data = $this->inventarioService->obtenerPanelInventario();
+        return view('inventario.index', $data);
     }
 
     /**
@@ -29,7 +33,7 @@ class InventarioController extends Controller
             'unidad_medida' => 'required|string|max:20',
         ]);
 
-        $insumo->update($data);
+        $this->inventarioService->actualizarStock($insumo, $data, auth()->id());
 
         return redirect()->route('inventario.index')
             ->with('success', 'Stock actualizado correctamente.');

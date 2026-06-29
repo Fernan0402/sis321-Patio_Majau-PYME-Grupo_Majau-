@@ -2,9 +2,11 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CompraInsumoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmpleadoController;
 use App\Http\Controllers\InventarioController;
+use App\Http\Controllers\MesaController;
 use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\VentaController;
@@ -46,9 +48,15 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware('role:Administrador')->group(function () {
         Route::resource('empleados', EmpleadoController::class)->except(['show']);
         Route::resource('productos', ProductoController::class);
+        Route::resource('mesas', MesaController::class)->except(['show']);
         Route::get('inventario', [InventarioController::class, 'index'])->name('inventario.index');
         Route::put('inventario/{insumo}', [InventarioController::class, 'update'])->name('inventario.update');
+        Route::resource('compras-insumos', CompraInsumoController::class)->only(['index', 'create', 'store', 'show']);
     });
+
+    Route::post('mesas/{mesa}/cambiar-estado', [MesaController::class, 'cambiarEstado'])
+        ->middleware('role:Administrador,Mesero')
+        ->name('mesas.cambiarEstado');
 
     // HU-02: Registrar pedidos (mesero y administrador).
     Route::middleware('role:Administrador,Mesero')->group(function () {

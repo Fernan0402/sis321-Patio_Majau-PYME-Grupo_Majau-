@@ -16,9 +16,10 @@ class DashboardController extends Controller
     {
         $totalPedidosHoy = Pedido::whereDate('created_at', today())->count();
         $totalVentasHoy = Venta::whereDate('created_at', today())->sum('monto_total');
-        $insumosStockBajo = Insumo::whereColumn('stock_actual', '<=', 'stock_minimo')->count();
+        $insumosStockBajo = Insumo::where('activo', true)->whereColumn('stock_actual', '<=', 'stock_minimo')->count();
         $pedidosPendientes = Pedido::where('estado', 'Pendiente')->count();
-        $alertasStock = Insumo::whereColumn('stock_actual', '<=', 'stock_minimo')
+        $alertasStock = Insumo::where('activo', true)
+            ->whereColumn('stock_actual', '<=', 'stock_minimo')
             ->orderBy('stock_actual')
             ->get();
 

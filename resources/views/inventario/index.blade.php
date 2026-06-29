@@ -65,6 +65,44 @@
                     </tbody>
                 </table>
             </div>
+            <div class="mt-3">
+                {{ $insumos->links() }}
+            </div>
+
+            <hr class="my-4">
+            <h5>Movimientos recientes</h5>
+            <div class="table-responsive">
+                <table class="table table-sm table-striped">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Insumo</th>
+                            <th>Tipo</th>
+                            <th>Motivo</th>
+                            <th>Cantidad</th>
+                            <th>Stock antes</th>
+                            <th>Stock nuevo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($movimientos as $movimiento)
+                            <tr>
+                                <td>{{ optional($movimiento->fecha_hora)->format('d/m/Y H:i') }}</td>
+                                <td>{{ $movimiento->insumo?->nombre }}</td>
+                                <td>{{ $movimiento->tipo }}</td>
+                                <td>{{ $movimiento->motivo }}</td>
+                                <td>{{ $movimiento->cantidad }}</td>
+                                <td>{{ $movimiento->stock_anterior }}</td>
+                                <td>{{ $movimiento->stock_nuevo }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7" class="text-center text-muted">Sin movimientos registrados.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

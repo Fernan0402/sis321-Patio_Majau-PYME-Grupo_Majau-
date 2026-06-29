@@ -32,6 +32,7 @@ class VentaController extends Controller
             ->get();
 
         $cajeros = Empleado::whereIn('rol', ['Cajero', 'Administrador'])
+            ->where('activo', true)
             ->where('estado', 'Activo')
             ->orderBy('nombre')
             ->get();

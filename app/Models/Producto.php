@@ -10,7 +10,11 @@ class Producto extends Model
     use HasFactory;
 
     protected $table = 'productos';
-    protected $fillable = ['nombre', 'descripcion', 'precio', 'categoria', 'estado'];
+    protected $fillable = ['nombre', 'descripcion', 'precio', 'categoria', 'estado', 'activo'];
+
+    protected $casts = [
+        'activo' => 'boolean',
+    ];
 
     public function detallePedidos()
     {

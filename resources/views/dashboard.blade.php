@@ -13,6 +13,7 @@
                             <a href="{{ route('empleados.index') }}" class="btn btn-outline-primary">HU-08 Usuarios</a>
                             <a href="{{ route('productos.index') }}" class="btn btn-outline-primary">HU-14 Productos</a>
                             <a href="{{ route('inventario.index') }}" class="btn btn-outline-primary">HU-19 Inventario</a>
+                            <a href="{{ route('compras-insumos.index') }}" class="btn btn-outline-primary">HU-05 Compras</a>
                         @endif
                         @if(in_array(auth()->user()->rol, ['Administrador', 'Mesero'], true))
                             <a href="{{ route('pedidos.index') }}" class="btn btn-outline-primary">HU-02 Pedidos</a>

@@ -42,6 +42,9 @@
                                     <a class="nav-link" href="{{ route('productos.index') }}">Productos</a>
                                 </li>
                                 <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('mesas.index') }}">Mesas</a>
+                                </li>
+                                <li class="nav-item">
                                     <a class="nav-link" href="{{ route('inventario.index') }}">
                                         Inventario
                                         @if(($totalAlertasStock ?? 0) > 0)
@@ -49,11 +52,17 @@
                                         @endif
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('compras-insumos.index') }}">Compras Insumos</a>
+                                </li>
                             @endif
 
                             @if(in_array(Auth::user()->rol, ['Administrador', 'Mesero'], true))
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{ route('pedidos.index') }}">Pedidos</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('mesas.index') }}">Estado Mesas</a>
                                 </li>
                             @endif
 

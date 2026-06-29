@@ -27,7 +27,14 @@ class AppServiceProvider extends ServiceProvider
 
             // Evita error si la tabla aún no existe (por ejemplo en instalación inicial).
             if (Schema::hasTable('insumos')) {
-                $totalAlertasStock = Insumo::whereColumn('stock_actual', '<=', 'stock_minimo')->count();
+                if (Schema::hasColumn('insumos', 'activo')) {
+                    $totalAlertasStock = Insumo::where('activo', true)
+                        ->whereColumn('stock_actual', '<=', 'stock_minimo')
+                        ->count();
+                } else {
+                    $totalAlertasStock = Insumo::whereColumn('stock_actual', '<=', 'stock_minimo')
+                        ->count();
+                }
             }
 
             $view->with('totalAlertasStock', $totalAlertasStock);

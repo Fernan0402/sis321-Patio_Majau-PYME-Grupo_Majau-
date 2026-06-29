@@ -14,7 +14,9 @@ class ProductoController extends Controller
      */
     public function index()
     {
-        $productos = Producto::orderBy('nombre')->get();
+        $productos = Producto::where('activo', true)
+            ->orderBy('nombre')
+            ->paginate(15);
         return view('productos.index', compact('productos'));
     }
 
@@ -111,9 +113,12 @@ class ProductoController extends Controller
 
     public function destroy(Producto $producto)
     {
-        $producto->delete();
+        $producto->update([
+            'estado' => 'Inactivo',
+            'activo' => false,
+        ]);
         return redirect()->route('productos.index')
-            ->with('success', 'Producto eliminado exitosamente');
+            ->with('success', 'Producto desactivado correctamente (borrado lógico).');
     }
 
     /**
@@ -123,6 +128,7 @@ class ProductoController extends Controller
     public function menu()
     {
         $productos = Producto::where('estado', 'Activo')
+            ->where('activo', true)
             ->orderBy('categoria')
             ->orderBy('nombre')
             ->get()

@@ -1,0 +1,11 @@
+dia,sprint_day,sp_planificados,sp_restantes_ideal,sp_restantes_real,sp_completados_dia,notas
+2026-07-01,1,33,29.7,33,0,Inicio Sprint 2 y planificación técnica
+2026-07-02,2,33,26.4,33,0,Arquitectura en capas + diseño de migraciones
+2026-07-03,3,33,23.1,33,0,Inicio implementación HU-04
+2026-07-04,4,33,19.8,33,0,HU-04 en progreso
+2026-07-05,5,33,16.5,33,0,Inicio HU-05 compras insumos
+2026-07-06,6,33,13.2,33,0,HU-05 y HU-11 en progreso
+2026-07-07,7,33,9.9,33,0,HU-12 + ajustes HU-09/10
+2026-07-08,8,33,6.6,33,0,HU-15/16 + HU-20
+2026-07-09,9,33,3.3,33,0,Pruebas + SQL reportes + Postman
+2026-07-10,10,33,0,33,0,Review, retrospectiva e informe APA7

@@ -51,6 +51,7 @@
                     </tbody>
                 </table>
             </div>
+            {{ $empleados->links() }}
         </div>
     </div>
 </div>

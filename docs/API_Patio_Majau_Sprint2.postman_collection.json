@@ -1,0 +1,183 @@
+{
+  "info": {
+    "_postman_id": "a7547f95-c5e4-4b4d-b4e9-5d4e8f0f1c01",
+    "name": "API Patio Majau - Sprint2",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Colección base para endpoints web del Sprint 2."
+  },
+  "item": [
+    {
+      "name": "HU-04 Inventario - Listar",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/inventario",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "inventario"
+          ]
+        }
+      }
+    },
+    {
+      "name": "HU-04 Inventario - Actualizar stock",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/x-www-form-urlencoded"
+          }
+        ],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "stock_actual",
+              "value": "25",
+              "type": "text"
+            },
+            {
+              "key": "stock_minimo",
+              "value": "10",
+              "type": "text"
+            },
+            {
+              "key": "unidad_medida",
+              "value": "kg",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/inventario/1",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "inventario",
+            "1"
+          ]
+        }
+      }
+    },
+    {
+      "name": "HU-05 Compras - Listar",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/compras-insumos",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "compras-insumos"
+          ]
+        }
+      }
+    },
+    {
+      "name": "HU-05 Compras - Crear",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"proveedor_id\": 1,\n  \"observacion\": \"Compra semanal\",\n  \"items\": [\n    {\n      \"insumo_id\": 1,\n      \"cantidad\": 5,\n      \"precio_unitario\": 10.5\n    }\n  ]\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/compras-insumos",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "compras-insumos"
+          ]
+        }
+      }
+    },
+    {
+      "name": "HU-11 Mesas - Listar",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/mesas",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "mesas"
+          ]
+        }
+      }
+    },
+    {
+      "name": "HU-11 Mesas - Crear",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"numero_mesa\": 12,\n  \"capacidad\": 4,\n  \"estado\": \"Disponible\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/mesas",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "mesas"
+          ]
+        }
+      }
+    },
+    {
+      "name": "HU-12 Mesas - Cambiar estado",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"estado\": \"Reservada\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/mesas/1/cambiar-estado",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "mesas",
+            "1",
+            "cambiar-estado"
+          ]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000"
+    }
+  ]
+}

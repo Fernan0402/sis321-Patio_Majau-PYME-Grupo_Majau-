@@ -30,11 +30,17 @@ class PedidoController extends Controller
     {
         $mesas = Mesa::orderBy('numero_mesa')->get();
         $meseros = Empleado::whereIn('rol', ['Mesero', 'Administrador'])
+            ->where('activo', true)
             ->where('estado', 'Activo')
             ->orderBy('nombre')
             ->get();
-        $productos = Producto::where('estado', 'Activo')->orderBy('nombre')->get();
-        $insumosStockBajo = Insumo::whereColumn('stock_actual', '<=', 'stock_minimo')->get();
+        $productos = Producto::where('estado', 'Activo')
+            ->where('activo', true)
+            ->orderBy('nombre')
+            ->get();
+        $insumosStockBajo = Insumo::where('activo', true)
+            ->whereColumn('stock_actual', '<=', 'stock_minimo')
+            ->get();
 
         return view('pedidos.create', compact('mesas', 'meseros', 'productos', 'insumosStockBajo'));
     }

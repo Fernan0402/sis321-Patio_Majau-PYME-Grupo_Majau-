@@ -25,10 +25,15 @@ class Empleado extends Authenticatable
         'contrasena',
         'rol',
         'estado',
+        'activo',
     ];
 
     protected $hidden = [
         'contrasena',
+    ];
+
+    protected $casts = [
+        'activo' => 'boolean',
     ];
 
     /**

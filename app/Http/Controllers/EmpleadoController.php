@@ -13,7 +13,10 @@ class EmpleadoController extends Controller
      */
     public function index()
     {
-        $empleados = Empleado::orderBy('rol')->orderBy('nombre')->get();
+        $empleados = Empleado::where('activo', true)
+            ->orderBy('rol')
+            ->orderBy('nombre')
+            ->paginate(15);
         return view('empleados.index', compact('empleados'));
     }
 
@@ -82,9 +85,12 @@ class EmpleadoController extends Controller
 
     public function destroy(Empleado $empleado)
     {
-        $empleado->delete();
+        $empleado->update([
+            'estado' => 'Inactivo',
+            'activo' => false,
+        ]);
 
         return redirect()->route('empleados.index')
-            ->with('success', 'Usuario eliminado correctamente.');
+            ->with('success', 'Usuario desactivado correctamente (borrado lógico).');
     }
 }
