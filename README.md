@@ -9,7 +9,7 @@ Proyecto académico de **Desarrollo de Sistemas II** para digitalizar la operaci
 - **Base de datos:** MySQL (XAMPP)
 - **Versionado:** Git + GitHub
 
-## Módulos implementados (Sprint 1)
+## Módulos implementados
 
 - **HU-01:** Inicio de sesión (usuario/contraseña, validación, logout, redirección por rol)
 - **HU-08:** Registro y gestión de usuarios (empleados)
@@ -19,6 +19,11 @@ Proyecto académico de **Desarrollo de Sistemas II** para digitalizar la operaci
 - **HU-02:** Registro de pedidos con detalle y validación de stock
 - **HU-03:** Registro de ventas
 - **HU-17:** Generación de factura con numeración única, detalle e impresión
+- **Sprint 2:** Compras de insumos, mesas, arquitectura en capas (controllers/services/repositories), reportes SQL y colección Postman
+- **Sprint 3 (en curso):**
+  - **HU-06:** Dashboard con reporte de ventas diarias y total vendido por rango
+  - **HU-18:** Historial de ventas filtrable por fecha
+  - **Actividad 7:** Endpoint `GET /dashboard/kpis`, Chart.js (línea, pie, barras), filtros dinámicos
 
 ## Seguridad y control de acceso
 
@@ -50,6 +55,7 @@ Seeders disponibles:
 - `InsumoSeeder`
 - `ProductoSeeder`
 - `ProductoInsumoSeeder`
+- Incluye usuario demo: `admin@demo.com / Demo123456`
 
 ## Instalación y ejecución
 
@@ -84,6 +90,7 @@ php artisan test
 - `/pedidos`
 - `/ventas`
 - `/ventas/{venta}/factura`
+- `/dashboard/kpis`
 
 ## Estructura documental
 
@@ -99,6 +106,10 @@ php artisan test
 - `docs/diagramas_uml.md`
 - `docs/guia_entrevista.md`
 - `docs/DESIGN.md`
+- `docs/SPRINT3_PLANIFICACION.md`
+- `docs/SPRINT3_PRUEBAS_INTEGRACION.md`
+- `docs/SPRINT3_REVIEW_RETROSPECTIVA.md`
+- `INFORME_SPRINT3_APA7.md`
 
 ## Flujo de demo recomendado
 
