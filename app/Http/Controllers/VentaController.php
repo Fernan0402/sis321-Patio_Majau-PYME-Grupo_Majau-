@@ -14,13 +14,19 @@ class VentaController extends Controller
     /**
      * HU-03: Listado de ventas.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $ventas = Venta::with(['pedido.mesa', 'empleado', 'factura'])
-            ->latest()
-            ->get();
+        $fechaInicio = $request->input('fecha_inicio');
+        $fechaFin = $request->input('fecha_fin');
 
-        return view('ventas.index', compact('ventas'));
+        $ventas = Venta::with(['pedido.mesa', 'empleado', 'factura'])
+            ->when($fechaInicio, fn ($q) => $q->whereDate('created_at', '>=', $fechaInicio))
+            ->when($fechaFin, fn ($q) => $q->whereDate('created_at', '<=', $fechaFin))
+            ->latest()
+            ->paginate(20)
+            ->withQueryString();
+
+        return view('ventas.index', compact('ventas', 'fechaInicio', 'fechaFin'));
     }
 
     public function create()

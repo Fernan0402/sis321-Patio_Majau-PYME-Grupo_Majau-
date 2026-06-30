@@ -49,6 +49,14 @@ class EmpleadoSeeder extends Seeder
                 'contrasena' => Hash::make('123456'),
                 'rol' => 'Cocinero',
                 'estado' => 'Activo'
+            ],
+            [
+                'nombre' => 'Demo',
+                'apellido' => 'Administrador',
+                'usuario' => 'admin@demo.com',
+                'contrasena' => Hash::make('Demo123456'),
+                'rol' => 'Administrador',
+                'estado' => 'Activo'
             ]
         ];
 

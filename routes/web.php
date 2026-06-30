@@ -36,6 +36,7 @@ Auth::routes(['register' => false, 'reset' => false, 'verify' => false]);
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/kpis', [DashboardController::class, 'kpis'])->name('dashboard.kpis');
     Route::get('/dashboard/admin', [DashboardController::class, 'index'])->name('dashboard.admin');
     Route::get('/dashboard/mesero', [DashboardController::class, 'index'])->name('dashboard.mesero');
     Route::get('/dashboard/cajero', [DashboardController::class, 'index'])->name('dashboard.cajero');
