@@ -12,6 +12,23 @@
                 <div class="alert alert-success">{{ session('success') }}</div>
             @endif
 
+            <form method="GET" class="row g-2 mb-3">
+                <div class="col-md-3">
+                    <label class="form-label">Fecha inicio</label>
+                    <input type="date" name="fecha_inicio" value="{{ $fechaInicio }}" class="form-control">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Fecha fin</label>
+                    <input type="date" name="fecha_fin" value="{{ $fechaFin }}" class="form-control">
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button class="btn btn-primary w-100" type="submit">Buscar</button>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <a href="{{ route('ventas.index') }}" class="btn btn-outline-secondary w-100">Limpiar</a>
+                </div>
+            </form>
+
             <table class="table table-bordered table-hover">
                 <thead class="table-dark">
                     <tr>
@@ -45,6 +62,7 @@
                     @endforelse
                 </tbody>
             </table>
+            {{ $ventas->links() }}
         </div>
     </div>
 </div>
