@@ -11,13 +11,24 @@ class EmpleadoController extends Controller
     /**
      * HU-08: Registrar usuarios (empleados del sistema).
      */
-    public function index()
+    public function index(Request $request)
     {
+        $busqueda = trim((string) $request->input('q', ''));
+
         $empleados = Empleado::where('activo', true)
+            ->when($busqueda !== '', function ($query) use ($busqueda) {
+                $query->where(function ($subQuery) use ($busqueda) {
+                    $subQuery->where('nombre', 'like', "%{$busqueda}%")
+                        ->orWhere('apellido', 'like', "%{$busqueda}%")
+                        ->orWhere('usuario', 'like', "%{$busqueda}%");
+                });
+            })
             ->orderBy('rol')
             ->orderBy('nombre')
-            ->paginate(15);
-        return view('empleados.index', compact('empleados'));
+            ->paginate(15)
+            ->withQueryString();
+
+        return view('empleados.index', compact('empleados', 'busqueda'));
     }
 
     public function create()

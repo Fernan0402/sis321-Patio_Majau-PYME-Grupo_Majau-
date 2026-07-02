@@ -19,11 +19,24 @@ class PedidoController extends Controller
      */
     public function index()
     {
-        $pedidos = Pedido::with(['mesa', 'empleado', 'detalles.producto'])
-            ->latest()
-            ->get();
+        $query = Pedido::with(['mesa', 'empleado', 'detalles.producto'])->latest();
 
-        return view('pedidos.index', compact('pedidos'));
+        if (request()->filled('estado') && request('estado') !== 'Todos') {
+            $query->where('estado', request('estado'));
+        }
+
+        if (request()->filled('mesa_id') && request('mesa_id') !== 'Todas') {
+            $query->where('mesa_id', request('mesa_id'));
+        }
+
+        if (request()->filled('fecha')) {
+            $query->whereDate('fecha_hora', request('fecha'));
+        }
+
+        $pedidos = $query->paginate(15)->withQueryString();
+        $mesas = Mesa::orderBy('numero_mesa')->get();
+
+        return view('pedidos.index', compact('pedidos', 'mesas'));
     }
 
     public function create()

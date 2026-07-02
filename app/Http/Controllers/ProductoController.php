@@ -12,12 +12,28 @@ class ProductoController extends Controller
      * HU-14: Registrar productos
      * Lista de productos del menú para gestión interna.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $productos = Producto::where('activo', true)
+        $categoria = trim((string) $request->input('categoria', ''));
+        // Por defecto se muestran solo productos activos.
+        $estado = trim((string) $request->input('estado', 'Activo'));
+
+        $productos = Producto::query()
+            ->when($categoria !== '', fn ($q) => $q->where('categoria', $categoria))
+            ->when($estado === 'Activo', fn ($q) => $q->where('activo', true)->where('estado', 'Activo'))
+            ->when($estado === 'Inactivo', fn ($q) => $q->where('activo', false)->where('estado', 'Inactivo'))
             ->orderBy('nombre')
-            ->paginate(15);
-        return view('productos.index', compact('productos'));
+            ->paginate(12)
+            ->withQueryString();
+
+        $categoriasDisponibles = Producto::query()
+            ->whereNotNull('categoria')
+            ->where('categoria', '!=', '')
+            ->distinct()
+            ->orderBy('categoria')
+            ->pluck('categoria');
+
+        return view('productos.index', compact('productos', 'categoria', 'estado', 'categoriasDisponibles'));
     }
 
     public function create()
@@ -98,14 +114,17 @@ class ProductoController extends Controller
             'estado',
         ]));
 
-        $syncData = [];
-        foreach ((array) $request->input('insumos', []) as $insumoId) {
-            $cantidad = (float) ($request->input("cantidades.$insumoId") ?? 0);
-            if ($cantidad > 0) {
-                $syncData[$insumoId] = ['cantidad_necesaria' => $cantidad];
+        // Solo sincroniza insumos cuando la UI envía explícitamente ese bloque.
+        if ($request->has('insumos')) {
+            $syncData = [];
+            foreach ((array) $request->input('insumos', []) as $insumoId) {
+                $cantidad = (float) ($request->input("cantidades.$insumoId") ?? 0);
+                if ($cantidad > 0) {
+                    $syncData[$insumoId] = ['cantidad_necesaria' => $cantidad];
+                }
             }
+            $producto->insumos()->sync($syncData);
         }
-        $producto->insumos()->sync($syncData);
 
         return redirect()->route('productos.index')
             ->with('success', 'Producto actualizado exitosamente');
@@ -127,13 +146,16 @@ class ProductoController extends Controller
      */
     public function menu()
     {
-        $productos = Producto::where('estado', 'Activo')
+        $productosPaginados = Producto::where('estado', 'Activo')
             ->where('activo', true)
             ->orderBy('categoria')
             ->orderBy('nombre')
-            ->get()
+            ->paginate(18);
+
+        $productosAgrupados = $productosPaginados
+            ->getCollection()
             ->groupBy(fn (Producto $producto) => $producto->categoria ?: 'Sin categoría');
 
-        return view('menu.index', compact('productos'));
+        return view('menu.index', compact('productosAgrupados', 'productosPaginados'));
     }
 }

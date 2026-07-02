@@ -1,183 +1,1172 @@
 {
   "info": {
     "_postman_id": "a7547f95-c5e4-4b4d-b4e9-5d4e8f0f1c01",
-    "name": "API Patio Majau - Sprint2",
+    "name": "API Patio Majau - Sprints 1,2,3",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "description": "Colección base para endpoints web del Sprint 2."
+    "description": "Coleccion actualizada de endpoints web del sistema Patio del Majau (Sprints 1, 2 y 3). Nota: al ser rutas web de Laravel, varias solicitudes requieren sesion autenticada y CSRF valido."
   },
   "item": [
     {
-      "name": "HU-04 Inventario - Listar",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{base_url}}/inventario",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "inventario"
-          ]
+      "name": "Autenticacion",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "usuario",
+                  "value": "admin@demo.com",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "Demo123456",
+                  "type": "text"
+                },
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/logout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "logout"
+              ]
+            }
+          }
         }
-      }
+      ]
     },
     {
-      "name": "HU-04 Inventario - Actualizar stock",
-      "request": {
-        "method": "PUT",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/x-www-form-urlencoded"
+      "name": "Dashboard",
+      "item": [
+        {
+          "name": "Dashboard HTML",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/dashboard",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "dashboard"
+              ]
+            }
           }
-        ],
-        "body": {
-          "mode": "urlencoded",
-          "urlencoded": [
+        },
+        {
+          "name": "KPI JSON",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/dashboard/kpis?fecha_inicio=2026-06-01&fecha_fin=2026-06-30",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "dashboard",
+                "kpis"
+              ],
+              "query": [
+                {
+                  "key": "fecha_inicio",
+                  "value": "2026-06-01"
+                },
+                {
+                  "key": "fecha_fin",
+                  "value": "2026-06-30"
+                }
+              ]
+            }
+          },
+          "response": [
             {
-              "key": "stock_actual",
-              "value": "25",
-              "type": "text"
-            },
-            {
-              "key": "stock_minimo",
-              "value": "10",
-              "type": "text"
-            },
-            {
-              "key": "unidad_medida",
-              "value": "kg",
-              "type": "text"
+              "name": "KPI response example",
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"success\": true,\n  \"fecha_inicio\": \"2026-06-01\",\n  \"fecha_fin\": \"2026-06-30\",\n  \"data\": {\n    \"cards\": {\n      \"ventas_periodo\": 12,\n      \"total_vendido\": 1560.5,\n      \"pedidos_periodo\": 18,\n      \"pedidos_pendientes\": 2,\n      \"stock_bajo\": 1,\n      \"tickets_emitidos\": 12\n    },\n    \"series\": {\n      \"ventas_diarias\": [],\n      \"metodo_pago\": [],\n      \"top_productos\": []\n    }\n  }\n}"
             }
           ]
-        },
-        "url": {
-          "raw": "{{base_url}}/inventario/1",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "inventario",
-            "1"
-          ]
         }
-      }
+      ]
     },
     {
-      "name": "HU-05 Compras - Listar",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{base_url}}/compras-insumos",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "compras-insumos"
-          ]
-        }
-      }
-    },
-    {
-      "name": "HU-05 Compras - Crear",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
+      "name": "Empleados",
+      "item": [
+        {
+          "name": "Listar empleados",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/empleados?q=",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "empleados"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": ""
+                }
+              ]
+            }
           }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"proveedor_id\": 1,\n  \"observacion\": \"Compra semanal\",\n  \"items\": [\n    {\n      \"insumo_id\": 1,\n      \"cantidad\": 5,\n      \"precio_unitario\": 10.5\n    }\n  ]\n}"
         },
-        "url": {
-          "raw": "{{base_url}}/compras-insumos",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "compras-insumos"
-          ]
-        }
-      }
-    },
-    {
-      "name": "HU-11 Mesas - Listar",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{base_url}}/mesas",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "mesas"
-          ]
-        }
-      }
-    },
-    {
-      "name": "HU-11 Mesas - Crear",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
+        {
+          "name": "Crear empleado",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "nombre",
+                  "value": "Maria",
+                  "type": "text"
+                },
+                {
+                  "key": "apellido",
+                  "value": "Flores",
+                  "type": "text"
+                },
+                {
+                  "key": "usuario",
+                  "value": "maria.f",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "Secret123",
+                  "type": "text"
+                },
+                {
+                  "key": "password_confirmation",
+                  "value": "Secret123",
+                  "type": "text"
+                },
+                {
+                  "key": "rol",
+                  "value": "Cajero",
+                  "type": "text"
+                },
+                {
+                  "key": "estado",
+                  "value": "Activo",
+                  "type": "text"
+                },
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/empleados",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "empleados"
+              ]
+            }
           }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"numero_mesa\": 12,\n  \"capacidad\": 4,\n  \"estado\": \"Disponible\"\n}"
         },
-        "url": {
-          "raw": "{{base_url}}/mesas",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "mesas"
-          ]
+        {
+          "name": "Actualizar empleado",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "_method",
+                  "value": "PUT",
+                  "type": "text"
+                },
+                {
+                  "key": "nombre",
+                  "value": "Maria",
+                  "type": "text"
+                },
+                {
+                  "key": "apellido",
+                  "value": "Flores",
+                  "type": "text"
+                },
+                {
+                  "key": "usuario",
+                  "value": "maria.f",
+                  "type": "text"
+                },
+                {
+                  "key": "rol",
+                  "value": "Cajero",
+                  "type": "text"
+                },
+                {
+                  "key": "estado",
+                  "value": "Activo",
+                  "type": "text"
+                },
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/empleados/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "empleados",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Desactivar empleado",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "_method",
+                  "value": "DELETE",
+                  "type": "text"
+                },
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/empleados/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "empleados",
+                "1"
+              ]
+            }
+          }
         }
-      }
+      ]
     },
     {
-      "name": "HU-12 Mesas - Cambiar estado",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
+      "name": "Productos y Menu",
+      "item": [
+        {
+          "name": "Listar productos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/productos?estado=Activo&categoria=",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "productos"
+              ],
+              "query": [
+                {
+                  "key": "estado",
+                  "value": "Activo"
+                },
+                {
+                  "key": "categoria",
+                  "value": ""
+                }
+              ]
+            }
           }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"estado\": \"Reservada\"\n}"
         },
-        "url": {
-          "raw": "{{base_url}}/mesas/1/cambiar-estado",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "mesas",
-            "1",
-            "cambiar-estado"
-          ]
+        {
+          "name": "Crear producto",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "nombre",
+                  "value": "Majau Batido",
+                  "type": "text"
+                },
+                {
+                  "key": "descripcion",
+                  "value": "Bebida de la casa",
+                  "type": "text"
+                },
+                {
+                  "key": "precio",
+                  "value": "18.50",
+                  "type": "text"
+                },
+                {
+                  "key": "categoria",
+                  "value": "Bebidas",
+                  "type": "text"
+                },
+                {
+                  "key": "estado",
+                  "value": "Activo",
+                  "type": "text"
+                },
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/productos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "productos"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Actualizar producto",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "_method",
+                  "value": "PUT",
+                  "type": "text"
+                },
+                {
+                  "key": "nombre",
+                  "value": "Majau Batido XL",
+                  "type": "text"
+                },
+                {
+                  "key": "descripcion",
+                  "value": "Version grande",
+                  "type": "text"
+                },
+                {
+                  "key": "precio",
+                  "value": "22",
+                  "type": "text"
+                },
+                {
+                  "key": "categoria",
+                  "value": "Bebidas",
+                  "type": "text"
+                },
+                {
+                  "key": "estado",
+                  "value": "Activo",
+                  "type": "text"
+                },
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/productos/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "productos",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Desactivar producto",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "_method",
+                  "value": "DELETE",
+                  "type": "text"
+                },
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/productos/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "productos",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Ver menu",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/menu",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "menu"
+              ]
+            }
+          }
         }
-      }
+      ]
+    },
+    {
+      "name": "Inventario y Compras",
+      "item": [
+        {
+          "name": "Inventario - Listar",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/inventario",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "inventario"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Inventario - Actualizar stock",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "_method",
+                  "value": "PUT",
+                  "type": "text"
+                },
+                {
+                  "key": "stock_actual",
+                  "value": "25",
+                  "type": "text"
+                },
+                {
+                  "key": "stock_minimo",
+                  "value": "10",
+                  "type": "text"
+                },
+                {
+                  "key": "unidad_medida",
+                  "value": "kg",
+                  "type": "text"
+                },
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/inventario/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "inventario",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Compras insumos - Listar",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/compras-insumos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "compras-insumos"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Compras insumos - Crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "proveedor_id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "observacion",
+                  "value": "Compra semanal",
+                  "type": "text"
+                },
+                {
+                  "key": "items[0][insumo_id]",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "items[0][cantidad]",
+                  "value": "5",
+                  "type": "text"
+                },
+                {
+                  "key": "items[0][precio_unitario]",
+                  "value": "10.5",
+                  "type": "text"
+                },
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/compras-insumos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "compras-insumos"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Compras insumos - Ver detalle",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/compras-insumos/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "compras-insumos",
+                "1"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Mesas",
+      "item": [
+        {
+          "name": "Listar mesas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/mesas",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "mesas"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Crear mesa",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "numero_mesa",
+                  "value": "12",
+                  "type": "text"
+                },
+                {
+                  "key": "capacidad",
+                  "value": "4",
+                  "type": "text"
+                },
+                {
+                  "key": "estado",
+                  "value": "Disponible",
+                  "type": "text"
+                },
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/mesas",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "mesas"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Actualizar mesa",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "_method",
+                  "value": "PUT",
+                  "type": "text"
+                },
+                {
+                  "key": "numero_mesa",
+                  "value": "12",
+                  "type": "text"
+                },
+                {
+                  "key": "capacidad",
+                  "value": "6",
+                  "type": "text"
+                },
+                {
+                  "key": "estado",
+                  "value": "Reservada",
+                  "type": "text"
+                },
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/mesas/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "mesas",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Cambiar estado mesa",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "estado",
+                  "value": "Reservada",
+                  "type": "text"
+                },
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/mesas/1/cambiar-estado",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "mesas",
+                "1",
+                "cambiar-estado"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Desactivar mesa",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "_method",
+                  "value": "DELETE",
+                  "type": "text"
+                },
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/mesas/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "mesas",
+                "1"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Pedidos",
+      "item": [
+        {
+          "name": "Listar pedidos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/pedidos?estado=Todos&mesa_id=Todas&fecha=2026-07-02",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pedidos"
+              ],
+              "query": [
+                {
+                  "key": "estado",
+                  "value": "Todos"
+                },
+                {
+                  "key": "mesa_id",
+                  "value": "Todas"
+                },
+                {
+                  "key": "fecha",
+                  "value": "2026-07-02"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Crear pedido",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "mesa_id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "empleado_id",
+                  "value": "2",
+                  "type": "text"
+                },
+                {
+                  "key": "tipo_pedido",
+                  "value": "Mesa",
+                  "type": "text"
+                },
+                {
+                  "key": "items[0][producto_id]",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "items[0][cantidad]",
+                  "value": "2",
+                  "type": "text"
+                },
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/pedidos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pedidos"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Detalle pedido",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/pedidos/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pedidos",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Cambiar estado pedido",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "estado",
+                  "value": "En Preparación",
+                  "type": "text"
+                },
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/pedidos/1/cambiar-estado",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pedidos",
+                "1",
+                "cambiar-estado"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ventas y Facturas",
+      "item": [
+        {
+          "name": "Listar ventas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/ventas?fecha_inicio=2026-07-01&fecha_fin=2026-07-31",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "ventas"
+              ],
+              "query": [
+                {
+                  "key": "fecha_inicio",
+                  "value": "2026-07-01"
+                },
+                {
+                  "key": "fecha_fin",
+                  "value": "2026-07-31"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Crear venta",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "pedido_id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "metodo_pago",
+                  "value": "Efectivo",
+                  "type": "text"
+                },
+                {
+                  "key": "razon_social_cliente",
+                  "value": "Consumidor Final",
+                  "type": "text"
+                },
+                {
+                  "key": "nit_cliente",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "generar_factura",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "_token",
+                  "value": "{{csrf_token}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/ventas",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "ventas"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Detalle venta",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/ventas/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "ventas",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Ver factura",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/ventas/1/factura",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "ventas",
+                "1",
+                "factura"
+              ]
+            }
+          }
+        }
+      ]
     }
   ],
   "variable": [
     {
       "key": "base_url",
       "value": "http://127.0.0.1:8000"
+    },
+    {
+      "key": "csrf_token",
+      "value": ""
     }
   ]
 }

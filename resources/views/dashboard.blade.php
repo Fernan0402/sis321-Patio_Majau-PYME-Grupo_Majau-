@@ -2,143 +2,170 @@
 
 @section('content')
 <div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header">Dashboard - Restaurante Patio del Majau</div>
-                <div class="card-body">
-                    <div class="mb-3 d-flex gap-2 flex-wrap">
-                        <a href="{{ route('menu.index') }}" class="btn btn-outline-primary">HU-13 Menú</a>
-                        @if(auth()->user()->rol === 'Administrador')
-                            <a href="{{ route('empleados.index') }}" class="btn btn-outline-primary">HU-08 Usuarios</a>
-                            <a href="{{ route('productos.index') }}" class="btn btn-outline-primary">HU-14 Productos</a>
-                            <a href="{{ route('inventario.index') }}" class="btn btn-outline-primary">HU-19 Inventario</a>
-                            <a href="{{ route('compras-insumos.index') }}" class="btn btn-outline-primary">HU-05 Compras</a>
-                        @endif
-                        @if(in_array(auth()->user()->rol, ['Administrador', 'Mesero'], true))
-                            <a href="{{ route('pedidos.index') }}" class="btn btn-outline-primary">HU-02 Pedidos</a>
-                        @endif
-                        @if(in_array(auth()->user()->rol, ['Administrador', 'Cajero'], true))
-                            <a href="{{ route('ventas.index') }}" class="btn btn-outline-primary">HU-03 Ventas</a>
-                        @endif
-                    </div>
+    <div class="dashboard-shell p-3 p-md-4">
+        <div class="dashboard-header">
+            <div>
+                <h2 class="dashboard-title">Buenas tardes, {{ auth()->user()->nombre ?? 'Equipo' }} 👋</h2>
+                <p class="dashboard-subtitle">Aquí está el resumen operacional del restaurante para la toma de decisiones.</p>
+            </div>
+            <div class="dashboard-chip">
+                <span>📅</span>
+                <span>{{ \Carbon\Carbon::now()->translatedFormat('l, d \\d\\e F \\d\\e Y') }}</span>
+            </div>
+        </div>
 
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <form id="filtroDashboard" class="row g-2">
-                                <div class="col-md-3">
-                                    <label class="form-label">Fecha inicio</label>
-                                    <input type="date" class="form-control" id="fecha_inicio" value="{{ $fechaInicio }}">
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="form-label">Fecha fin</label>
-                                    <input type="date" class="form-control" id="fecha_fin" value="{{ $fechaFin }}">
-                                </div>
-                                <div class="col-md-2 d-flex align-items-end">
-                                    <button type="button" id="btnFiltrar" class="btn btn-primary w-100">Filtrar</button>
-                                </div>
-                            </form>
-                        </div>
+        <div class="dashboard-filter mb-3">
+            <div class="row g-2 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label">Fecha inicio</label>
+                    <input type="date" class="form-control rounded-pill" id="fecha_inicio" value="{{ $fechaInicio }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Fecha fin</label>
+                    <input type="date" class="form-control rounded-pill" id="fecha_fin" value="{{ $fechaFin }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Rango rápido</label>
+                    <div class="quick-range">
+                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill js-range active" data-range="7d">7 días</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill js-range" data-range="30d">30 días</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill js-range" data-range="mes">Mes actual</button>
                     </div>
-
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="card text-white bg-primary mb-3">
-                                <div class="card-header">Ventas (Periodo)</div>
-                                <div class="card-body">
-                                    <h5 class="card-title" id="kpi_ventas_periodo">{{ $kpis['cards']['ventas_periodo'] }}</h5>
-                                    <p class="card-text">Total de ventas registradas</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="card text-white bg-success mb-3">
-                                <div class="card-header">Total Vendido</div>
-                                <div class="card-body">
-                                    <h5 class="card-title" id="kpi_total_vendido">Bs. {{ number_format($kpis['cards']['total_vendido'], 2) }}</h5>
-                                    <p class="card-text">Monto facturado en periodo</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="card text-white bg-warning mb-3">
-                                <div class="card-header">Stock Bajo</div>
-                                <div class="card-body">
-                                    <h5 class="card-title" id="kpi_stock_bajo">{{ $kpis['cards']['stock_bajo'] }}</h5>
-                                    <p class="card-text">Insumos con stock bajo</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="card text-white bg-danger mb-3">
-                                <div class="card-header">Pedidos Pendientes</div>
-                                <div class="card-body">
-                                    <h5 class="card-title" id="kpi_pedidos_pendientes">{{ $kpis['cards']['pedidos_pendientes'] }}</h5>
-                                    <p class="card-text">Pedidos por preparar</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="card border-info mb-3">
-                                <div class="card-body">
-                                    <h6 class="card-title">Pedidos (Periodo)</h6>
-                                    <h4 id="kpi_pedidos_periodo">{{ $kpis['cards']['pedidos_periodo'] }}</h4>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="card border-secondary mb-3">
-                                <div class="card-body">
-                                    <h6 class="card-title">Tickets emitidos</h6>
-                                    <h4 id="kpi_tickets">{{ $kpis['cards']['tickets_emitidos'] }}</h4>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row mt-2">
-                        <div class="col-md-6 mb-3">
-                            <div class="card">
-                                <div class="card-header">Ventas diarias (HU-06)</div>
-                                <div class="card-body">
-                                    <canvas id="chartVentasDiarias"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <div class="card">
-                                <div class="card-header">Métodos de pago</div>
-                                <div class="card-body">
-                                    <canvas id="chartMetodoPago"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-12 mb-3">
-                            <div class="card">
-                                <div class="card-header">Top productos por ingresos</div>
-                                <div class="card-body">
-                                    <canvas id="chartTopProductos"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    @if($alertasStock->isNotEmpty())
-                        <div class="alert alert-warning mt-3">
-                            <strong>HU-19: Alerta de stock bajo</strong>
-                            <ul class="mb-0 mt-2">
-                                @foreach($alertasStock as $insumo)
-                                    <li>{{ $insumo->nombre }}: {{ $insumo->stock_actual }} {{ $insumo->unidad_medida }} (mínimo: {{ $insumo->stock_minimo }})</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
+                </div>
+                <div class="col-md-2">
+                    <button type="button" id="btnFiltrar" class="btn btn-dark w-100 rounded-pill">
+                        <span id="btnFiltrarLabel">Aplicar filtros</span>
+                    </button>
+                </div>
+                <div class="col-md-1">
+                    <button type="button" id="btnLimpiar" class="btn btn-outline-secondary w-100 rounded-pill">Limpiar</button>
                 </div>
             </div>
         </div>
+
+        <div class="row g-3">
+            <div class="col-md-4 col-lg-2">
+                <div class="card kpi-card kpi-accent-primary">
+                    <div class="card-body">
+                        <div class="kpi-icon">🧾</div>
+                        <p class="kpi-label">Ventas del período</p>
+                        <h3 class="kpi-value" id="kpi_ventas_periodo">{{ $kpis['cards']['ventas_periodo'] }}</h3>
+                        <p class="kpi-help">Tickets emitidos</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-lg-2">
+                <div class="card kpi-card kpi-accent-success">
+                    <div class="card-body">
+                        <div class="kpi-icon">💳</div>
+                        <p class="kpi-label">Total vendido</p>
+                        <h3 class="kpi-value" id="kpi_total_vendido">Bs. {{ number_format($kpis['cards']['total_vendido'], 2) }}</h3>
+                        <p class="kpi-help">Ingresos acumulados</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-lg-2">
+                <div class="card kpi-card kpi-accent-info">
+                    <div class="card-body">
+                        <div class="kpi-icon">📈</div>
+                        <p class="kpi-label">Ticket promedio</p>
+                        <h3 class="kpi-value" id="kpi_ticket_promedio">Bs. 0.00</h3>
+                        <p class="kpi-help">Valor por venta</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-lg-2">
+                <div class="card kpi-card kpi-accent-danger">
+                    <div class="card-body">
+                        <div class="kpi-icon">⏳</div>
+                        <p class="kpi-label">Pedidos pendientes</p>
+                        <h3 class="kpi-value" id="kpi_pedidos_pendientes">{{ $kpis['cards']['pedidos_pendientes'] }}</h3>
+                        <p class="kpi-help">En cola operativa</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-lg-2">
+                <div class="card kpi-card kpi-accent-warning">
+                    <div class="card-body">
+                        <div class="kpi-icon">⚠️</div>
+                        <p class="kpi-label">Stock bajo</p>
+                        <h3 class="kpi-value" id="kpi_stock_bajo">{{ $kpis['cards']['stock_bajo'] }}</h3>
+                        <p class="kpi-help">Insumos en alerta</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-lg-2">
+                <div class="card kpi-card kpi-accent-dark">
+                    <div class="card-body">
+                        <div class="kpi-icon">🧺</div>
+                        <p class="kpi-label">Pedidos del período</p>
+                        <h3 class="kpi-value" id="kpi_pedidos_periodo">{{ $kpis['cards']['pedidos_periodo'] }}</h3>
+                        <p class="kpi-help">Tickets: <span id="kpi_tickets">{{ $kpis['cards']['tickets_emitidos'] }}</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-3 mt-1">
+            <div class="col-lg-8">
+                <div class="card chart-card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span>Tendencia de ventas</span>
+                        <span class="badge text-bg-light" id="badgeRango">Últimos 7 días</span>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="chartVentasDiarias" height="110"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card chart-card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span>Métodos de pago</span>
+                        <span class="badge text-bg-light">Transacciones</span>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="chartMetodoPago" height="110"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card chart-card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span>Distribución por producto</span>
+                        <span class="badge text-bg-light">% del total</span>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="chartDistribucion" height="120"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card chart-card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span>Top productos más vendidos</span>
+                        <div class="chart-toolbar">
+                            <button class="btn btn-sm btn-outline-secondary rounded-pill js-top-mode active" data-mode="revenue">Revenue</button>
+                            <button class="btn btn-sm btn-outline-secondary rounded-pill js-top-mode" data-mode="cantidad">Cantidad</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="chartTopProductos" height="120"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @if($alertasStock->isNotEmpty())
+            <div class="alert alert-stock-custom mt-3">
+                <strong>HU-19: alerta de stock bajo</strong>
+                <ul class="mb-0 mt-2">
+                    @foreach($alertasStock as $insumo)
+                        <li>{{ $insumo->nombre }}: {{ $insumo->stock_actual }} {{ $insumo->unidad_medida }} (mínimo: {{ $insumo->stock_minimo }})</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
     </div>
 </div>
 
@@ -147,71 +174,191 @@
 const kpisIniciales = @json($kpis);
 let chartVentasDiarias;
 let chartMetodoPago;
+let chartDistribucion;
 let chartTopProductos;
+let topMode = 'revenue';
+let latestData = JSON.parse(JSON.stringify(kpisIniciales));
+const colorPalette = ['#ff9800', '#ec4899', '#6d4c41', '#9e8e7f', '#1f1611', '#b0a296', '#7f5539'];
+
+function formatMoney(value) {
+    return `Bs. ${Number(value || 0).toFixed(2)}`;
+}
+
+function setLoading(isLoading) {
+    const btn = document.getElementById('btnFiltrar');
+    const label = document.getElementById('btnFiltrarLabel');
+    btn.disabled = isLoading;
+    label.textContent = isLoading ? 'Cargando...' : 'Aplicar filtros';
+}
+
+function applyQuickRange(range) {
+    const start = document.getElementById('fecha_inicio');
+    const end = document.getElementById('fecha_fin');
+    const today = new Date();
+    let from = new Date();
+
+    if (range === '7d') from.setDate(today.getDate() - 6);
+    if (range === '30d') from.setDate(today.getDate() - 29);
+    if (range === 'mes') from = new Date(today.getFullYear(), today.getMonth(), 1);
+
+    start.value = from.toISOString().split('T')[0];
+    end.value = today.toISOString().split('T')[0];
+}
+
+function updateRangoBadge() {
+    const inicio = document.getElementById('fecha_inicio').value;
+    const fin = document.getElementById('fecha_fin').value;
+    document.getElementById('badgeRango').textContent = `${inicio} → ${fin}`;
+}
+
+function animateValue(elementId, finalValue, options = {}) {
+    const element = document.getElementById(elementId);
+    const prefix = options.prefix || '';
+    const decimals = options.decimals || 0;
+    const duration = 420;
+    const startTime = performance.now();
+
+    function tick(now) {
+        const progress = Math.min((now - startTime) / duration, 1);
+        const current = finalValue * progress;
+        element.textContent = `${prefix}${current.toFixed(decimals)}`;
+        if (progress < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+}
+
+function destroyChart(chartRef) {
+    if (chartRef) chartRef.destroy();
+}
 
 function buildCharts(data) {
     const series = data.series;
     const ventasLabels = series.ventas_diarias.map(i => i.fecha);
     const ventasValues = series.ventas_diarias.map(i => Number(i.total));
-
     const metodoLabels = series.metodo_pago.map(i => i.metodo_pago);
     const metodoValues = series.metodo_pago.map(i => Number(i.cantidad));
-
     const topLabels = series.top_productos.map(i => i.producto);
-    const topValues = series.top_productos.map(i => Number(i.revenue));
+    const topValues = series.top_productos.map(i => Number(i[topMode]));
+    const distLabels = series.top_productos.slice(0, 6).map(i => i.producto);
+    const distValues = series.top_productos.slice(0, 6).map(i => Number(i.revenue));
 
-    if (chartVentasDiarias) chartVentasDiarias.destroy();
-    if (chartMetodoPago) chartMetodoPago.destroy();
-    if (chartTopProductos) chartTopProductos.destroy();
+    destroyChart(chartVentasDiarias);
+    destroyChart(chartMetodoPago);
+    destroyChart(chartDistribucion);
+    destroyChart(chartTopProductos);
 
     chartVentasDiarias = new Chart(document.getElementById('chartVentasDiarias'), {
-        type: 'line',
+        type: 'bar',
         data: {
             labels: ventasLabels,
-            datasets: [{ label: 'Ventas Bs.', data: ventasValues, borderColor: '#2E75B6', backgroundColor: 'rgba(46,117,182,0.2)', fill: true }]
+            datasets: [{
+                label: 'Ventas Bs.',
+                data: ventasValues,
+                borderRadius: 10,
+                maxBarThickness: 36,
+                backgroundColor: ['#b0a296', '#9e8e7f', '#6d4c41', '#ff9800', '#ec4899', '#ff9800', '#8f7f73']
+            }]
         },
-        options: { responsive: true }
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+                tooltip: { callbacks: { label: context => ` ${formatMoney(context.parsed.y)}` } }
+            },
+            scales: {
+                y: { ticks: { callback: value => `Bs. ${value}` } }
+            }
+        }
     });
 
     chartMetodoPago = new Chart(document.getElementById('chartMetodoPago'), {
+        type: 'bar',
+        data: { labels: metodoLabels, datasets: [{ data: metodoValues, backgroundColor: colorPalette }] },
+        options: { responsive: true, plugins: { legend: { display: false } } }
+    });
+
+    chartDistribucion = new Chart(document.getElementById('chartDistribucion'), {
         type: 'pie',
-        data: {
-            labels: metodoLabels,
-            datasets: [{ data: metodoValues, backgroundColor: ['#2E75B6', '#1F6B40', '#C55A11', '#8E44AD'] }]
-        },
-        options: { responsive: true }
+        data: { labels: distLabels, datasets: [{ data: distValues, backgroundColor: colorPalette }] },
+        options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
     });
 
     chartTopProductos = new Chart(document.getElementById('chartTopProductos'), {
         type: 'bar',
         data: {
             labels: topLabels,
-            datasets: [{ label: 'Revenue Bs.', data: topValues, backgroundColor: '#1F6B40' }]
+            datasets: [{
+                label: topMode === 'revenue' ? 'Ingresos Bs.' : 'Cantidad vendida',
+                data: topValues,
+                backgroundColor: colorPalette
+            }]
         },
-        options: { responsive: true, plugins: { legend: { position: 'top' } } }
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            plugins: { legend: { display: false } }
+        }
     });
 }
 
 function updateCards(cards) {
-    document.getElementById('kpi_ventas_periodo').textContent = cards.ventas_periodo;
-    document.getElementById('kpi_total_vendido').textContent = `Bs. ${Number(cards.total_vendido).toFixed(2)}`;
-    document.getElementById('kpi_stock_bajo').textContent = cards.stock_bajo;
-    document.getElementById('kpi_pedidos_pendientes').textContent = cards.pedidos_pendientes;
-    document.getElementById('kpi_pedidos_periodo').textContent = cards.pedidos_periodo;
-    document.getElementById('kpi_tickets').textContent = cards.tickets_emitidos;
+    const ticketPromedio = cards.ventas_periodo > 0
+        ? Number(cards.total_vendido) / Number(cards.ventas_periodo)
+        : 0;
+
+    animateValue('kpi_ventas_periodo', Number(cards.ventas_periodo), { decimals: 0 });
+    animateValue('kpi_total_vendido', Number(cards.total_vendido), { decimals: 2, prefix: 'Bs. ' });
+    animateValue('kpi_ticket_promedio', Number(ticketPromedio), { decimals: 2, prefix: 'Bs. ' });
+    animateValue('kpi_pedidos_pendientes', Number(cards.pedidos_pendientes), { decimals: 0 });
+    animateValue('kpi_stock_bajo', Number(cards.stock_bajo), { decimals: 0 });
+    animateValue('kpi_pedidos_periodo', Number(cards.pedidos_periodo), { decimals: 0 });
+    animateValue('kpi_tickets', Number(cards.tickets_emitidos), { decimals: 0 });
 }
 
 async function fetchKpis() {
     const inicio = document.getElementById('fecha_inicio').value;
     const fin = document.getElementById('fecha_fin').value;
     const url = `{{ route('dashboard.kpis') }}?fecha_inicio=${encodeURIComponent(inicio)}&fecha_fin=${encodeURIComponent(fin)}`;
-    const response = await fetch(url);
-    const payload = await response.json();
-    updateCards(payload.data.cards);
-    buildCharts(payload.data);
+    try {
+        setLoading(true);
+        const response = await fetch(url);
+        const payload = await response.json();
+        latestData = payload.data;
+        updateCards(payload.data.cards);
+        buildCharts(payload.data);
+        updateRangoBadge();
+    } catch (error) {
+        alert('No se pudo cargar el dashboard. Intente nuevamente.');
+    } finally {
+        setLoading(false);
+    }
 }
 
+document.querySelectorAll('.js-range').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.js-range').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        applyQuickRange(btn.dataset.range);
+    });
+});
+
+document.getElementById('btnLimpiar').addEventListener('click', () => {
+    applyQuickRange('7d');
+    fetchKpis();
+});
+
+document.querySelectorAll('.js-top-mode').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.js-top-mode').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        topMode = btn.dataset.mode;
+        buildCharts(latestData);
+    });
+});
+
 document.getElementById('btnFiltrar').addEventListener('click', fetchKpis);
+updateCards(kpisIniciales.cards);
 buildCharts(kpisIniciales);
+updateRangoBadge();
 </script>
 @endsection

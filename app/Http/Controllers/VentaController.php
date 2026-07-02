@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Empleado;
 use App\Models\Factura;
 use App\Models\Pedido;
 use App\Models\Venta;
@@ -26,7 +25,23 @@ class VentaController extends Controller
             ->paginate(20)
             ->withQueryString();
 
-        return view('ventas.index', compact('ventas', 'fechaInicio', 'fechaFin'));
+        $hoy = now()->toDateString();
+        $inicioMes = now()->copy()->startOfMonth()->toDateString();
+
+        $ventasHoy = Venta::whereDate('created_at', $hoy)->count();
+        $revenueHoy = (float) Venta::whereDate('created_at', $hoy)->sum('monto_total');
+        $revenueMes = (float) Venta::whereDate('created_at', '>=', $inicioMes)->sum('monto_total');
+        $ticketPromedio = (float) Venta::query()->avg('monto_total');
+
+        return view('ventas.index', compact(
+            'ventas',
+            'fechaInicio',
+            'fechaFin',
+            'ventasHoy',
+            'revenueHoy',
+            'revenueMes',
+            'ticketPromedio'
+        ));
     }
 
     public function create()
@@ -37,13 +52,9 @@ class VentaController extends Controller
             ->orderByDesc('id')
             ->get();
 
-        $cajeros = Empleado::whereIn('rol', ['Cajero', 'Administrador'])
-            ->where('activo', true)
-            ->where('estado', 'Activo')
-            ->orderBy('nombre')
-            ->get();
+        $usuarioActual = auth()->user();
 
-        return view('ventas.create', compact('pedidos', 'cajeros'));
+        return view('ventas.create', compact('pedidos', 'usuarioActual'));
     }
 
     /**
@@ -54,7 +65,6 @@ class VentaController extends Controller
     {
         $data = $request->validate([
             'pedido_id' => 'required|exists:pedidos,id',
-            'empleado_id' => 'required|exists:empleados,id',
             'metodo_pago' => 'required|in:Efectivo,Tarjeta Débito,Tarjeta Crédito,QR',
             'razon_social_cliente' => 'nullable|string|max:150',
             'nit_cliente' => 'nullable|string|max:50',
@@ -66,7 +76,8 @@ class VentaController extends Controller
 
             $venta = Venta::create([
                 'pedido_id' => $pedido->id,
-                'empleado_id' => $data['empleado_id'],
+                // El cajero de la venta siempre es el usuario autenticado.
+                'empleado_id' => auth()->id(),
                 // HU-03: el monto se calcula automáticamente desde el pedido.
                 'monto_total' => $pedido->total,
                 'metodo_pago' => $data['metodo_pago'],

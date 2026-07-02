@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Insumo;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
@@ -22,6 +23,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Fuerza paginación estilo Bootstrap para evitar íconos SVG gigantes.
+        Paginator::useBootstrapFive();
+
         View::composer('*', function ($view): void {
             $totalAlertasStock = 0;
 
